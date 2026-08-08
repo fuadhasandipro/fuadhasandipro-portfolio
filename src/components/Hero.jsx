@@ -125,7 +125,7 @@ export default function Hero() {
                     fill
                     priority
                     sizes="(max-width: 768px) 100vw, 500px"
-                    className="object-cover object-top filter grayscale brightness-105 contrast-[102%] hover:grayscale-0 hover:scale-105 transition-all duration-500"
+                    className="object-cover object-top brightness-105 contrast-[102%] hover:grayscale-0 hover:scale-105 transition-all duration-500"
                   />
 
                   {/* Subtle Caption Overlay at Bottom */}
