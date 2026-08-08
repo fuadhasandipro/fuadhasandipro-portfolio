@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { personalDetails } from "@/data/portfolioData";
-import { Mail, Copy, Check, Send, MessageSquare, ArrowUpRight, Sparkles, PhoneCall } from "lucide-react";
+import { Mail, Copy, Check, Send, MessageSquare, ArrowUpRight, Sparkles, PhoneCall, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import confetti from "canvas-confetti";
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState({ type: null, message: "" });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,23 +25,57 @@ export default function Contact() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    confetti({
-      particleCount: 80,
-      spread: 60,
-      origin: { y: 0.6 }
-    });
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({
-        name: "",
-        email: "",
-        service: "Next.js App",
-        message: ""
+    setLoading(true);
+    setStatus({ type: null, message: "" });
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({
+          access_key: "3794150d-ee09-4cf8-bb3f-10bb09b04f55",
+          name: formData.name,
+          email: formData.email,
+          service: formData.service,
+          message: formData.message,
+          from_name: "Fuad Hasan Portfolio Contact"
+        })
       });
-    }, 4000);
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitted(true);
+        confetti({
+          particleCount: 80,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+        setFormData({
+          name: "",
+          email: "",
+          service: "Next.js App",
+          message: ""
+        });
+      } else {
+        setStatus({
+          type: "error",
+          message: data.message || "Failed to send message. Please try again or email fuad@zyntro360.com directly."
+        });
+      }
+    } catch (err) {
+      setStatus({
+        type: "error",
+        message: "Network error occurred. Please check your connection or contact fuad@zyntro360.com."
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -150,21 +186,27 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* Right Clean Form */}
+          {/* Right Web3Forms Form */}
           <div className="lg:col-span-7">
             <div className="bg-white border-2 border-black rounded-3xl p-6 sm:p-8 shadow-outline-lg">
               
               {submitted ? (
-                <div className="py-12 text-center space-y-4">
+                <div className="py-10 text-center space-y-4">
                   <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto border-2 border-black shadow-outline">
-                    <Sparkles className="w-8 h-8" />
+                    <CheckCircle2 className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-2xl font-extrabold text-black">
-                    Message Sent!
+                    Message Sent Successfully!
                   </h3>
-                  <p className="text-neutral-700 font-medium max-w-md mx-auto">
-                    Thanks for reaching out! I'll read your message and reply via email or WhatsApp soon.
+                  <p className="text-neutral-700 font-medium max-w-md mx-auto leading-relaxed">
+                    Thank you for reaching out! Your message has been delivered directly to Fuad. He will respond to your email shortly.
                   </p>
+                  <button
+                    onClick={() => setSubmitted(false)}
+                    className="px-6 py-2.5 bg-neutral-100 text-black border-2 border-black font-bold text-xs rounded-xl shadow-outline-sm hover:bg-black hover:text-white transition-all"
+                  >
+                    Send Another Message
+                  </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -178,10 +220,11 @@ export default function Contact() {
                       <input
                         type="text"
                         required
+                        disabled={loading}
                         placeholder="Your name"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 bg-neutral-50 border-2 border-black rounded-xl text-sm font-semibold text-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                        className="w-full px-4 py-3 bg-neutral-50 border-2 border-black rounded-xl text-sm font-semibold text-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-60"
                       />
                     </div>
 
@@ -192,10 +235,11 @@ export default function Contact() {
                       <input
                         type="email"
                         required
+                        disabled={loading}
                         placeholder="your@email.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 bg-neutral-50 border-2 border-black rounded-xl text-sm font-semibold text-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                        className="w-full px-4 py-3 bg-neutral-50 border-2 border-black rounded-xl text-sm font-semibold text-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-60"
                       />
                     </div>
                   </div>
@@ -210,6 +254,7 @@ export default function Contact() {
                         <button
                           type="button"
                           key={s}
+                          disabled={loading}
                           onClick={() => setFormData({ ...formData, service: s })}
                           className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all border-2 ${
                             formData.service === s
@@ -231,20 +276,39 @@ export default function Contact() {
                     <textarea
                       rows={4}
                       required
+                      disabled={loading}
                       placeholder="Describe your project, website goals, or questions..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-4 py-3 bg-neutral-50 border-2 border-black rounded-xl text-sm font-semibold text-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                      className="w-full px-4 py-3 bg-neutral-50 border-2 border-black rounded-xl text-sm font-semibold text-black focus:bg-white focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-60"
                     />
                   </div>
 
-                  {/* Submit Button */}
+                  {/* Status Banner */}
+                  {status.type === "error" && (
+                    <div className="p-4 bg-red-50 border-2 border-red-600 rounded-2xl flex items-start gap-3 text-red-900 text-sm font-semibold">
+                      <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                      <span>{status.message}</span>
+                    </div>
+                  )}
+
+                  {/* Submit Button with Loader */}
                   <button
                     type="submit"
-                    className="w-full py-4 bg-black text-white font-extrabold text-base rounded-2xl border-2 border-black shadow-outline-hover flex items-center justify-center gap-2 transition-all"
+                    disabled={loading}
+                    className="w-full py-4 bg-black text-white font-extrabold text-base rounded-2xl border-2 border-black shadow-outline-hover flex items-center justify-center gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    <span>Send Message</span>
-                    <Send className="w-4 h-4" />
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                        <span>Sending Message...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Send Message</span>
+                        <Send className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
 
                 </form>
