@@ -31,10 +31,10 @@ export default function Hero() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
+
           {/* Left Text Column */}
           <div className="lg:col-span-7 space-y-8 text-left">
-            
+
             {/* Availability Pill */}
             <div className="hero-animate inline-flex items-center gap-2.5 px-4 py-2 bg-white border-2 border-black rounded-full shadow-outline-sm">
               <span className="relative flex h-3 w-3">
@@ -101,10 +101,10 @@ export default function Hero() {
           {/* Right Profile Photo Column */}
           <div className="lg:col-span-5 hero-animate">
             <div className="relative mx-auto max-w-md lg:max-w-none">
-              
+
               {/* Photo Frame Container */}
               <div className="bg-white border-2 border-black rounded-3xl p-4 shadow-outline-lg relative group">
-                
+
                 {/* Header Tag Bar */}
                 <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-black px-2">
                   <div className="flex items-center gap-2">
@@ -127,7 +127,7 @@ export default function Hero() {
                     sizes="(max-width: 768px) 100vw, 500px"
                     className="object-cover object-top filter grayscale brightness-105 contrast-[102%] hover:grayscale-0 hover:scale-105 transition-all duration-500"
                   />
-                  
+
                   {/* Subtle Caption Overlay at Bottom */}
                   <div className="absolute bottom-3 left-3 right-3 bg-black/80 backdrop-blur-sm text-white p-3 rounded-xl border border-white/20 space-y-0.5">
                     <div className="font-extrabold text-base flex items-center justify-between">
@@ -147,7 +147,7 @@ export default function Hero() {
                     <span className="text-xs font-mono font-bold">150+ Projects Completed</span>
                   </div>
                   <span className="text-[10px] font-mono uppercase bg-white text-black px-2 py-0.5 rounded font-extrabold">
-                    Verified
+                    still counting...
                   </span>
                 </div>
 
