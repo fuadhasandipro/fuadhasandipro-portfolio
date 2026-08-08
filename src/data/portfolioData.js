@@ -23,7 +23,7 @@ export const statsData = [
     value: 6,
     prefix: "+",
     label: "Years of Experience",
-    subtext: "Designing & building sites since 2019",
+    subtext: "Designing & building sites since 2020",
     tag: "Experience"
   },
   {
